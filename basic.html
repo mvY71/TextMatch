@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script>
+        function testMatch() {
+            const pText = document.getElementById("pText");
+            const txtSubText = document.getElementById("txtSubText");
+            const pSummary = document.getElementById("pSummary");
+
+            let text = pText.innerHTML;
+            text = text.replace(/(<mark class="highlight">|<\/mark>)/gim, '');
+            pText.innerHTML = text;
+            pSummary.innerHTML = "";
+
+            const subText = txtSubText.value;
+
+            if ((subText.length > 0 && text.length > 0) === true) {
+                const regex = new RegExp(subText, 'gi');
+
+                const newText = text.replace(regex, '<mark class="highlight">$&</mark>');
+                pText.innerHTML = newText;
+
+                let matches = text.matchAll(regex);
+                let summary = "";
+                let i = 0;
+                let mt = "matches";
+                for (const match of matches) {
+                    i++;
+                    summary = summary + `<br/>${i}: start:${match.index}. end:${subText.length + match.index}`
+                }
+                if (i == 1) {
+                    mt = "match";
+                }
+                pSummary.innerHTML = `Summary: ${i} ${mt}` + summary;
+            }
+            else if ((text.length === 0) === true) {
+                pSummary.innerHTML = "Box text is empty";
+            }
+        }
+        function setText() {
+            const txtSourceText = document.getElementById("txtSourceText");
+            const pText = document.getElementById("pText");
+            pText.innerHTML = txtSourceText.value;
+        }
+        function reset() {
+            const txtSourceText = document.getElementById("txtSourceText");
+            const pText = document.getElementById("pText");
+            const txtSubText = document.getElementById("txtSubText");
+            const pSummary = document.getElementById("pSummary");
+
+            pSummary.innerHTML = "";
+            pText.innerHTML = "";
+            txtSubText.value = "";
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <div>
+            <label>Source Text</label>
+            <textarea id="txtSourceText" cols="100" rows="10">
+Bournemouth manager Andoni Iraola gave a coy response when asked about his future after Saturday's frustrating goalless draw at Crystal Palace, but Cherries supporters will be desperate for the Spaniard to extend his stay at Vitality Stadium.
+The draw at Selhurst Park lifted Iraola's team to 49 points - a club record in the Premier League - with five games remaining, surpassing their tally of 48 in Iraola's first season.
+Bournemouth were disappointed not to claim all three points in south London after failing to capitalise on Palace defender Chris Richards' first-half dismissal, but Iraola - whose existing deal is set to expire next summer - could yet guide the Cherries into Europe for the first time in their history.
+                </textarea>
+        </div>
+        <div>
+            <input type="button" value="Set Text" onclick="setText()" />
+            <input type="button" value="Reset" onclick="reset()" />
+        </div>
+        <div>
+            <label>Sub Text</label>
+            <input type="text" id="txtSubText" size="100" onkeyup="testMatch()" />
+        </div>
+    </div>
+    <p id="pText" style="background-color:lightgrey"></p>
+    <p id="pSummary"></p>
+</body>
+</html>
